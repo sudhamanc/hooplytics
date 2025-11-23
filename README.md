@@ -17,29 +17,31 @@
 
 ## 📖 Overview
 
-**Hoop.io** is a sophisticated AI-powered chatbot that combines Google Gemini's natural language understanding with real-time NBA data through the Model Context Protocol (MCP). Ask about historical NBA facts, get live game scores, check player statistics, or explore team standings - all through a beautiful, modern chat interface.
+**Hoop.io** is a sophisticated AI-powered chatbot that combines Google Gemini 2.5 Flash with real-time NBA data through the Model Context Protocol (MCP) and Google Search grounding. Ask about historical NBA facts, get live game scores, check player statistics, explore team standings, or inquire about recent NBA news - all through a beautiful, modern chat interface.
 
-The application intelligently decides when to use its general basketball knowledge versus fetching live data from the NBA API, providing accurate and up-to-date information for all your basketball queries.
+The application intelligently decides when to use NBA API tools, Google Search grounding, or its general basketball knowledge, providing accurate and up-to-date information for all your basketball queries.
 
 ---
 
 ## ✨ Features
 
 ### 🤖 **Intelligent Query Handling**
-- **Dual-Mode Intelligence**: Automatically switches between general knowledge and live NBA API data
+- **Triple-Mode Intelligence**: Automatically switches between NBA API tools, Google Search grounding, and general knowledge
+- **Google Search Grounding**: Real-time web search for current NBA news, team records, and latest statistics
 - **Contextual Conversations**: Maintains conversation history for natural, multi-turn dialogues
-- **Smart Tool Selection**: Gemini decides when to call NBA API tools based on query context
+- **Smart Tool Selection**: Gemini 2.5 Flash autonomously decides the best data source for each query
 
 ### 📊 **Real-Time NBA Data**
-- **Live Game Scores**: Get current scores and game status for today's matches
+- **Live Game Scores**: Get current scores and game status for today's matches via NBA API
 - **League Standings**: Check current NBA standings for both conferences
 - **Player Statistics**: Fetch detailed career stats for any NBA player
+- **Current Season Data**: Google Search grounding provides team records, recent games, and up-to-date news
 - **Historical Knowledge**: Ask about NBA history, records, and all-time achievements
 
 ### 🎨 **Premium User Interface**
 - **Modern Design**: Glassmorphism-inspired dark theme with NBA color accents
 - **Two-Column Layout**: AI responses on the left, chat controls on the right
-- **Source Attribution**: See whether data came from NBA API or Gemini's knowledge
+- **Source Attribution**: See whether data came from NBA API, Google Search, or Gemini LLM
 - **Quick Actions**: One-click access to popular queries
 - **Conversation History**: Review and re-ask previous questions
 
@@ -138,7 +140,14 @@ Want to try Hoop.io without installing anything? Launch it on MyBinder!
 ```
 "What are today's games?"
 "Show me current standings"
-"Get Stephen Curry's stats"
+"Get Stephen Curry's career stats"
+```
+
+**Recent/Current Season** (uses Google Search):
+```
+"How many wins does the Lakers have this season?"
+"Who won last night's game between Warriors and Celtics?"
+"Latest NBA trade news"
 ```
 
 ### Example Conversation
@@ -152,9 +161,13 @@ Hoop.io: The Los Angeles Lakers have also won 17 championships,
          tied with the Celtics for the most all-time.
          Source: Gemini LLM
 
-You: Show me LeBron James' stats
+You: Show me LeBron James' career stats
 Hoop.io: [Detailed career statistics from NBA API]
          Source: NBA API
+
+You: How many wins does the Lakers have this season?
+Hoop.io: [Current season record from Google Search]
+         Source: Google Search
 ```
 
 ---
@@ -163,7 +176,8 @@ Hoop.io: [Detailed career statistics from NBA API]
 
 ### Backend
 - **FastAPI** - Modern Python web framework
-- **Google Gemini 2.0 Flash** - Advanced LLM for natural language understanding
+- **Google Gemini 2.5 Flash** - Latest LLM with Google Search grounding support
+- **Google Search Grounding** - Real-time web search integration for current information
 - **MCP (Model Context Protocol)** - Tool integration framework
 - **FastMCP** - Python MCP server implementation
 - **nba_api** - Official NBA statistics API wrapper
@@ -244,8 +258,9 @@ Assignment4/
 │   ├── main.py                # Main application entry point
 │   │                          # - FastAPI app configuration
 │   │                          # - MCP client setup and lifespan management
-│   │                          # - Chat endpoint with Gemini integration
-│   │                          # - Tool calling logic
+│   │                          # - Chat endpoint with Gemini 2.5 Flash
+│   │                          # - Combined tool with Google Search + NBA API
+│   │                          # - Tool calling and response handling
 │   ├── requirements.txt       # Python dependencies
 │   ├── .env.example          # Environment variables template
 │   ├── .env                  # Your API keys (gitignored)
@@ -281,8 +296,9 @@ Assignment4/
 **`backend/main.py`**
 - **Lifespan Manager**: Connects to MCP server on startup, loads NBA tools
 - **Chat Endpoint**: Handles user messages, manages conversation history
+- **Combined Tool**: Creates unified tool with Google Search grounding + NBA API functions
 - **Tool Integration**: Converts MCP tools to Gemini format, executes tool calls
-- **Response Handling**: Tracks data source (NBA API vs Gemini LLM)
+- **Response Handling**: Tracks data source (NBA API, Google Search, or Gemini LLM)
 
 **`mcp-server/nba_server.py`**
 - **FastMCP Server**: Exposes NBA data as MCP tools
@@ -344,10 +360,10 @@ graph TB
 
 1. **User Input** → User types question in chat interface
 2. **Frontend** → Sends message + history to backend API
-3. **Backend** → Prepares context and sends to Gemini with available tools
-4. **Gemini Analysis** → Decides whether to use knowledge or call a tool
-5. **Tool Execution** (if needed) → Backend calls MCP server → NBA API
-6. **Response** → Gemini formats data → Backend adds source tag → Frontend displays
+3. **Backend** → Prepares context, creates combined tool (Google Search + NBA functions), sends to Gemini
+4. **Gemini Analysis** → Decides whether to use LLM knowledge, Google Search, or NBA API tools
+5. **Tool Execution** (if needed) → Backend executes NBA MCP calls or processes Google Search results
+6. **Response** → Gemini formats data → Backend adds source attribution (NBA API/Google Search/Gemini) → Frontend displays with source tag
 
 ---
 
@@ -382,6 +398,8 @@ Contributions are welcome! Here's how you can help:
 ### Key Concepts
 - **MCP (Model Context Protocol)**: A standardized way for LLMs to interact with external tools
 - **Function Calling**: Gemini's ability to recognize when to use tools vs general knowledge
+- **Google Search Grounding**: Real-time web search integration for up-to-date information beyond training data
+- **Tool Orchestration**: Combining multiple data sources (NBA API + Google Search + LLM) in a single unified interface
 - **Agentic Behavior**: The LLM acts as an intelligent agent, making decisions about tool usage
 
 ---
@@ -403,11 +421,11 @@ Special thanks to the open-source community for making projects like this possib
 
 ### Version 1.0.0 (Current)
 - ✅ Initial release with full functionality
-- ✅ Integrated Google Gemini 2.0 Flash with MCP
+- ✅ Integrated Google Gemini 2.5 Flash with MCP and Google Search grounding
 - ✅ Implemented three NBA API tools (live games, standings, player stats)
 - ✅ Built premium glassmorphism UI with two-column layout
 - ✅ Added conversation history and context management
-- ✅ Implemented source attribution (NBA API vs Gemini LLM)
+- ✅ Implemented triple-source attribution (NBA API, Google Search, Gemini LLM)
 - ✅ Added quick actions and suggested queries
 - ✅ Created comprehensive documentation
 

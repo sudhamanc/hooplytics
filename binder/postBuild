@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Install Python dependencies
+echo "Installing Python dependencies..."
+pip install -r backend/requirements.txt
+
 # Install frontend dependencies
 echo "Installing frontend dependencies..."
 cd frontend

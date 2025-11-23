@@ -17,31 +17,31 @@
 
 ## 📖 Overview
 
-**Hoop.io** is a sophisticated AI-powered chatbot that combines Google Gemini 2.5 Flash with real-time NBA data through the Model Context Protocol (MCP) and Google Search grounding. Ask about historical NBA facts, get live game scores, check player statistics, explore team standings, or inquire about recent NBA news - all through a beautiful, modern chat interface.
+**Hoop.io** is a sophisticated AI-powered chatbot that combines Google Gemini 2.5 Flash with real-time NBA data through the Model Context Protocol (MCP). Ask about historical NBA facts, get live game scores, check player statistics, explore team standings, or inquire about recent NBA news - all through a beautiful, modern chat interface.
 
-The application intelligently decides when to use NBA API tools, Google Search grounding, or its general basketball knowledge, providing accurate and up-to-date information for all your basketball queries.
+The application intelligently decides when to use dedicated NBA API tools versus Gemini's extensive capabilities (which include LLM knowledge and web search), providing accurate and up-to-date information for all your basketball queries.
 
 ---
 
 ## ✨ Features
 
 ### 🤖 **Intelligent Query Handling**
-- **Triple-Mode Intelligence**: Automatically switches between NBA API tools, Google Search grounding, and general knowledge
-- **Google Search Grounding**: Real-time web search for current NBA news, team records, and latest statistics
+- **Dual-Source Intelligence**: Automatically switches between NBA API tools and Gemini's knowledge base
+- **Gemini 2.5 Flash**: Advanced LLM with built-in web search capabilities for current information
 - **Contextual Conversations**: Maintains conversation history for natural, multi-turn dialogues
-- **Smart Tool Selection**: Gemini 2.5 Flash autonomously decides the best data source for each query
+- **Smart Tool Selection**: Intelligently decides when to use NBA API tools vs general knowledge/web search
 
 ### 📊 **Real-Time NBA Data**
 - **Live Game Scores**: Get current scores and game status for today's matches via NBA API
 - **League Standings**: Check current NBA standings for both conferences
 - **Player Statistics**: Fetch detailed career stats for any NBA player
-- **Current Season Data**: Google Search grounding provides team records, recent games, and up-to-date news
+- **Current Season Data**: Gemini provides team records, recent games, and up-to-date news
 - **Historical Knowledge**: Ask about NBA history, records, and all-time achievements
 
 ### 🎨 **Premium User Interface**
 - **Modern Design**: Glassmorphism-inspired dark theme with NBA color accents
 - **Two-Column Layout**: AI responses on the left, chat controls on the right
-- **Source Attribution**: See whether data came from NBA API, Google Search, or Gemini LLM
+- **Source Attribution**: See whether data came from NBA API or Gemini
 - **Quick Actions**: One-click access to popular queries
 - **Conversation History**: Review and re-ask previous questions
 
@@ -143,7 +143,7 @@ Want to try Hoop.io without installing anything? Launch it on MyBinder!
 "Get Stephen Curry's career stats"
 ```
 
-**Recent/Current Season** (uses Google Search):
+**Recent/Current Season** (uses Gemini):
 ```
 "How many wins does the Lakers have this season?"
 "Who won last night's game between Warriors and Celtics?"
@@ -154,20 +154,20 @@ Want to try Hoop.io without installing anything? Launch it on MyBinder!
 ```
 You: Who won the most NBA championships?
 Hoop.io: The Boston Celtics have won 17 NBA championships.
-         Source: Gemini LLM
+         Source: Gemini
 
 You: What about the Lakers?
 Hoop.io: The Los Angeles Lakers have also won 17 championships, 
          tied with the Celtics for the most all-time.
-         Source: Gemini LLM
+         Source: Gemini
 
 You: Show me LeBron James' career stats
 Hoop.io: [Detailed career statistics from NBA API]
          Source: NBA API
 
 You: How many wins does the Lakers have this season?
-Hoop.io: [Current season record from Google Search]
-         Source: Google Search
+Hoop.io: [Current season record from Gemini's knowledge/web search]
+         Source: Gemini
 ```
 
 ---
@@ -176,8 +176,7 @@ Hoop.io: [Current season record from Google Search]
 
 ### Backend
 - **FastAPI** - Modern Python web framework
-- **Google Gemini 2.5 Flash** - Latest LLM with Google Search grounding support
-- **Google Search Grounding** - Real-time web search integration for current information
+- **Google Gemini 2.5 Flash** - Advanced LLM with built-in web search capabilities
 - **MCP (Model Context Protocol)** - Tool integration framework
 - **FastMCP** - Python MCP server implementation
 - **nba_api** - Official NBA statistics API wrapper

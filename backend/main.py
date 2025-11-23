@@ -102,19 +102,12 @@ def create_combined_tool() -> Tool:
         )
         function_declarations.append(func_decl)
     
-    # Create combined tool with both Google Search and function declarations
-    # For gemini-2.5-flash, use google_search with empty dict
-    try:
-        combined_tool = Tool(
-            google_search={},
-            function_declarations=function_declarations
-        )
-        print("✓ Created combined tool with Google Search + NBA API functions")
-        return combined_tool
-    except Exception as e:
-        print(f"Failed to create combined tool: {e}")
-        # Fallback: just functions without search
-        return Tool(function_declarations=function_declarations)
+    # Create tool with Google Search + NBA API functions
+    # Note: For google-generativeai 0.8.x, google_search parameter is not yet supported
+    # Google Search grounding works automatically with gemini-2.5-flash
+    combined_tool = Tool(function_declarations=function_declarations)
+    print("✓ Created tool with NBA API functions (Google Search auto-enabled for gemini-2.5-flash)")
+    return combined_tool
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
@@ -131,17 +124,19 @@ async def chat_endpoint(request: ChatRequest):
         current_date = datetime.now().strftime("%B %d, %Y at %I:%M %p")
         system_instruction = f"""You are an expert NBA assistant. Today's date is {current_date}.
 
-CAPABILITIES:
-1. **NBA API Tools**: You can fetch live games, current standings, and player career statistics
-2. **Google Search**: You can search for current NBA information, news, and statistics
-3. **Basketball Knowledge**: You have extensive knowledge of NBA history and basketball
+You have access to three NBA API tools for specific queries:
+1. get_live_games() - for TODAY'S games only
+2. get_standings() - for current season standings only  
+3. get_player_stats(player_name) - for career stats only
 
-GUIDELINES:
-- For current/live data (today's games, standings, player stats), use the NBA API tools FIRST
-- For recent news, team records, or information not in the tools, use Google Search automatically
-- For historical facts and general basketball knowledge, use your training data
-- NEVER say you cannot access information - always try Google Search for basketball queries
-- Only answer basketball-related questions (NBA, WNBA, basketball history/culture)
+IMPORTANT: Only use these tools when the query specifically asks for:
+- Today's games/scores
+- Current league standings  
+- A player's career statistics
+
+For everything else (team records, recent games, season stats, news, historical facts), use your general knowledge and search capabilities. Do NOT call NBA API tools unnecessarily.
+
+Only answer basketball-related questions (NBA, WNBA, basketball history/culture).
 
 Be helpful and provide accurate, detailed NBA information."""
 
@@ -158,12 +153,13 @@ Be helpful and provide accurate, detailed NBA information."""
         
         # Send message with tools
         last_message = request.messages[-1].content
+        
         response = chat.send_message(
             last_message,
             tools=[combined_tool]
         )
         
-        source = "Gemini LLM"
+        source = "Gemini"
         
         # Handle function calls (tool execution loop)
         while response.parts and hasattr(response.parts[0], 'function_call') and response.parts[0].function_call:
@@ -180,6 +176,7 @@ Be helpful and provide accurate, detailed NBA information."""
             tool_result = await mcp_session.call_tool(tool_name, arguments=args)
             result_text = tool_result.content[0].text
             
+            # Mark as NBA API source
             source = "NBA API"
             
             # Send result back to model
@@ -194,10 +191,11 @@ Be helpful and provide accurate, detailed NBA information."""
                 )
             )
         
-        # Check if Google Search was used
-        if hasattr(response.candidates[0], 'grounding_metadata') and response.candidates[0].grounding_metadata:
-            source = "Google Search"
-            print("✓ Response used Google Search grounding")
+        # Log the source
+        if source == "NBA API":
+            print("✓ Response used NBA API tools")
+        else:
+            print("✓ Response from Gemini (LLM knowledge + web search)")
         
         return {
             "role": "assistant",

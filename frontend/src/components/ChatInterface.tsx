@@ -86,42 +86,40 @@ const ChatInterface: React.FC = () => {
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Left Column: AI Responses / "The Feed" */}
-      <div className="flex-1 flex flex-col relative z-10 h-full">
+      <div className="flex-1 flex flex-col relative z-10 h-full overflow-hidden">
         {/* Fixed Header Section */}
-        <header className="flex-none p-8 border-b border-white/5 bg-[#0f1014]/80 backdrop-blur-md z-20">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                <span className="text-white font-bold text-lg">IO</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">
-                  Hoop<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.io</span>
-                </h1>
-                <p className="text-slate-400 text-xs font-medium tracking-wide uppercase">NBA Intelligence Engine</p>
-              </div>
+        <header className="flex-none p-6 border-b border-white/5 bg-[#0f1014]/95 backdrop-blur-md z-20 shrink-0">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+              <span className="text-white font-bold text-lg">IO</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">
+                Hoop<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.io</span>
+              </h1>
+              <p className="text-slate-400 text-xs font-medium tracking-wide uppercase">NBA Intelligence Engine</p>
             </div>
           </div>
 
           {/* Persistent Welcome Banner - Visible only when chatting */}
           {messages.length > 0 && (
-            <div className="flex items-center gap-6 p-4 rounded-2xl bg-white/5 border border-white/5 animate-fade-in">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500/10 to-purple-500/10 flex items-center justify-center border border-white/5">
-                <div className="text-xl">🏀</div>
+            <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500/10 to-purple-500/10 flex items-center justify-center border border-white/5 shrink-0">
+                <div className="text-lg">🏀</div>
               </div>
-              <div>
-                <h2 className="text-lg font-bold text-white mb-1">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mr-2">Hoop.io</span>
+              <div className="min-w-0">
+                <h2 className="text-sm font-bold text-white mb-0.5">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mr-1">Hoop.io</span>
                   Ready for Tip-Off
                 </h2>
-                <p className="text-sm text-slate-400">Ask about live scores, player stats, or historical data.</p>
+                <p className="text-xs text-slate-400">Ask about live scores, player stats, or historical data.</p>
               </div>
             </div>
           )}
         </header>
 
         {/* Scrollable Chat Feed */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 scrollbar-thin scrollbar-thumb-slate-700">
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 scrollbar-thin scrollbar-thumb-slate-700 min-h-0">
           {messages.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center text-center animate-fade-in">
               <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-500/10 to-purple-500/10 flex items-center justify-center mb-6 border border-white/5 backdrop-blur-sm shadow-2xl shadow-blue-500/20">

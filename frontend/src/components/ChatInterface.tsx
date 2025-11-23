@@ -14,14 +14,7 @@ const ChatInterface: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Log API URL on component mount for debugging
-  useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL || '';
-    console.log('🏀 Hoop.io ChatInterface loaded');
-    console.log('📡 API URL:', apiUrl || '(same origin - relative paths)');
-    console.log('🌍 Environment:', import.meta.env.MODE);
-    console.log('🌐 Window location:', window.location.href);
-  }, []);
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,8 +43,6 @@ const ChatInterface: React.FC = () => {
       const apiUrl = import.meta.env.VITE_API_URL || '';
       // Use relative path without leading slash to stay within proxy context
       const endpoint = apiUrl ? `${apiUrl}/api/chat` : './api/chat';
-      console.log('🚀 Sending message to:', endpoint);
-      console.log('🔍 API URL:', apiUrl || '(relative path)');
       
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -63,11 +54,8 @@ const ChatInterface: React.FC = () => {
         }),
       });
 
-      console.log('📥 Response status:', response.status);
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ API Error:', errorText);
         throw new Error(`Failed to fetch response: ${response.status}`);
       }
 
@@ -80,7 +68,6 @@ const ChatInterface: React.FC = () => {
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: "Sorry, I encountered an error connecting to the NBA server.",

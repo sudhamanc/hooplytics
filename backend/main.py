@@ -34,7 +34,6 @@ async def lifespan(app: FastAPI):
         env=os.environ.copy()
     )
     
-    print("Connecting to MCP Server...")
     try:
         async with stdio_client(server_params) as (read, write):
             async with ClientSession(read, write) as session:
@@ -44,10 +43,8 @@ async def lifespan(app: FastAPI):
                 result = await session.list_tools()
                 mcp_tools = result.tools
                 
-                print(f"Loaded {len(mcp_tools)} tools from MCP Server")
                 yield
     except Exception as e:
-        print(f"Failed to connect to MCP Server: {e}")
         yield
 
 app = FastAPI(lifespan=lifespan)
@@ -93,20 +90,14 @@ if IS_MYBINDER and static_dir.exists():
     async def serve_root():
         """Serve the frontend index.html (MyBinder only)"""
         return FileResponse(static_dir / "index.html")
-    
-    print(f"✓ MyBinder mode: Serving static files from {static_dir}")
 elif IS_MYBINDER:
     @app.get("/")
     async def root():
         return {"error": "Frontend not built. Run './start_mybinder.sh' to build and serve the app."}
-    
-    print("⚠️  MyBinder detected but frontend/dist not found. Run 'npm run build' in frontend/")
 else:
     @app.get("/")
     async def root():
         return {"message": "Hoop.io NBA Assistant API", "status": "running", "mode": "development"}
-    
-    print("ℹ️  Local dev mode: API only (frontend on port 5173)")
 
 # Configure Gemini
 api_key = os.getenv("GOOGLE_API_KEY")
@@ -157,7 +148,6 @@ def create_combined_tool() -> Tool:
     # Note: For google-generativeai 0.8.x, google_search parameter is not yet supported
     # Google Search grounding works automatically with gemini-2.5-flash
     combined_tool = Tool(function_declarations=function_declarations)
-    print("✓ Created tool with NBA API functions (Google Search auto-enabled for gemini-2.5-flash)")
     return combined_tool
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -218,8 +208,6 @@ Be helpful and provide accurate, detailed NBA information."""
             tool_name = fc.name
             args = dict(fc.args)
             
-            print(f"→ Calling tool: {tool_name} with args: {args}")
-            
             if not mcp_session:
                 raise HTTPException(status_code=500, detail="MCP Session not active")
             
@@ -242,12 +230,6 @@ Be helpful and provide accurate, detailed NBA information."""
                 )
             )
         
-        # Log the source
-        if source == "NBA API":
-            print("✓ Response used NBA API tools")
-        else:
-            print("✓ Response from Gemini (LLM knowledge + web search)")
-        
         return {
             "role": "assistant",
             "content": response.text,
@@ -255,7 +237,4 @@ Be helpful and provide accurate, detailed NBA information."""
         }
 
     except Exception as e:
-        import traceback
-        print(f"✗ Error in chat_endpoint: {e}")
-        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

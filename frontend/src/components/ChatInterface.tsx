@@ -16,9 +16,12 @@ const ChatInterface: React.FC = () => {
 
   // Log API URL on component mount for debugging
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    // If served from same origin (MyBinder), use relative path
+    // Otherwise use VITE_API_URL or localhost (local dev)
+    const apiUrl = import.meta.env.VITE_API_URL || 
+                   (window.location.port === '' ? '' : 'http://localhost:8000');
     console.log('🏀 Hoop.io ChatInterface loaded');
-    console.log('📡 API URL:', apiUrl);
+    console.log('📡 API URL:', apiUrl || 'same origin (relative path)');
     console.log('🌍 Environment:', import.meta.env.MODE);
   }, []);
 
@@ -45,8 +48,9 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Use environment variable or default to localhost for local development
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      // Use environment variable, or empty string for same-origin (MyBinder), or localhost (local dev)
+      const apiUrl = import.meta.env.VITE_API_URL || 
+                     (window.location.port === '' ? '' : 'http://localhost:8000');
       console.log('🚀 Sending message to:', `${apiUrl}/api/chat`);
       
       const response = await fetch(`${apiUrl}/api/chat`, {

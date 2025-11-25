@@ -57,7 +57,7 @@ const ChatInterface: React.FC = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Failed to fetch response: ${response.status}`);
+        throw new Error(`Failed to fetch response: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();

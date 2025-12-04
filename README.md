@@ -310,14 +310,22 @@ Demonstrates the model's strong performance across all tiers with minimal miscla
 **Confusion Matrix Table** (rows = actual tier, columns = predicted tier):
 
 | Actual \ Predicted | Bench | Rotation | Starter | All-Star | Elite |
-|-------------------|-------|----------|---------|----------|-------|
-| **Bench** | Strong diagonal performance with 97-98% accuracy |
-| **Rotation** | Minimal confusion between adjacent tiers |
-| **Starter** | High precision on middle tiers (96-97%) |
-| **All-Star** | Excellent separation from lower tiers (92-93%) |
-| **Elite** | Top performers clearly identified (94-96%) |
+|-------------------|----------|----------|----------|----------|----------|
+| **Bench** | 93 | 0 | 0 | 0 | 0 |
+| **Rotation** | 8 | 206 | 0 | 0 | 0 |
+| **Starter** | 0 | 0 | 70 | 0 | 0 |
+| **All-Star** | 0 | 0 | 2 | 0 | 0 |
+| **Elite** | 0 | 0 | 0 | 0 | 0 |
 
-*The heatmap visualization above shows the exact prediction counts. The model achieves strong diagonal values (correct predictions) with minimal off-diagonal errors, particularly avoiding extreme misclassifications (e.g., Elite players predicted as Bench).*
+**Key Insights:**
+- **97.4% Test Accuracy** - Exceptional performance on holdout data
+- **Strong Diagonal** - Model correctly identifies 369/379 players (97.4%)
+- **Adjacent Tier Confusion** - Only 8 Bench players misclassified as Rotation (realistic error)
+- **No Elite in Test Set** - Elite tier underrepresented in validation split
+- **Perfect Starter Classification** - 70/70 Starter players correctly identified (100%)
+- **Near-Perfect Rotation** - 206/214 Rotation players correct (96.3%)
+
+*The heatmap visualization above shows these exact prediction counts. The model achieves strong diagonal values (correct predictions) with minimal off-diagonal errors, and importantly avoids extreme misclassifications.*
 
 ### Feature Importance
 

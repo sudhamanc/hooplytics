@@ -149,10 +149,11 @@ class NBADataCollector:
             df_filtered['FG_PCT_NORM'] * 0.20     # Efficiency
         )
         
-        # Assign tiers based on percentiles
+        # Assign tiers based on achievable thresholds
+        # Max composite score is ~0.82, so adjusted bins accordingly
         df_filtered['TIER'] = pd.cut(
             df_filtered['COMPOSITE_SCORE'],
-            bins=[0, 0.20, 0.40, 0.70, 0.90, 1.0],
+            bins=[0, 0.20, 0.40, 0.60, 0.75, 1.0],
             labels=[0, 1, 2, 3, 4],  # Bench, Rotation, Starter, All-Star, Elite
             include_lowest=True
         ).astype(int)

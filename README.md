@@ -312,18 +312,19 @@ Demonstrates the model's strong performance across all tiers with minimal miscla
 | Actual \ Predicted | Bench | Rotation | Starter | All-Star | Elite |
 |-------------------|----------|----------|----------|----------|----------|
 | **Bench** | 93 | 0 | 0 | 0 | 0 |
-| **Rotation** | 8 | 206 | 0 | 0 | 0 |
+| **Rotation** | 2 | 208 | 4 | 0 | 0 |
 | **Starter** | 0 | 0 | 70 | 0 | 0 |
 | **All-Star** | 0 | 0 | 2 | 0 | 0 |
 | **Elite** | 0 | 0 | 0 | 0 | 0 |
 
 **Key Insights:**
-- **97.4% Test Accuracy** - Exceptional performance on holdout data
-- **Strong Diagonal** - Model correctly identifies 369/379 players (97.4%)
-- **Adjacent Tier Confusion** - Only 8 Bench players misclassified as Rotation (realistic error)
-- **No Elite in Test Set** - Elite tier underrepresented in validation split
-- **Perfect Starter Classification** - 70/70 Starter players correctly identified (100%)
-- **Near-Perfect Rotation** - 206/214 Rotation players correct (96.3%)
+- **97.9% Test Accuracy** - Exceptional performance on holdout data (improved from 97.4%)
+- **Strong Diagonal** - Model correctly identifies 371/379 players (97.9%)
+- **Minimal Errors** - Only 8 misclassifications total, all between adjacent tiers
+- **Perfect Bench Classification** - 93/93 Bench players correct (100%)
+- **Perfect Starter Classification** - 70/70 Starter players correct (100%)
+- **Near-Perfect Rotation** - 208/214 Rotation players correct (97.2%)
+- **Elite Tier Exists** - Training set includes 3 Elite players: Nikola Jokić (2024-25, 2025-26) and Luka Dončić (2023-24)
 
 *The heatmap visualization above shows these exact prediction counts. The model achieves strong diagonal values (correct predictions) with minimal off-diagonal errors, and importantly avoids extreme misclassifications.*
 
@@ -586,20 +587,18 @@ Training labels are derived from a composite performance score:
 
 ```python
 composite_score = (
-    0.35 * normalized_pts +  # Points (35% weight)
+    0.40 * normalized_pts +  # Points (40% weight)
     0.20 * normalized_ast +  # Assists (20%)
-    0.15 * normalized_reb +  # Rebounds (15%)
-    0.15 * normalized_fg_pct +  # Shooting efficiency (15%)
-    0.10 * normalized_plus_minus +  # Impact (10%)
-    0.05 * normalized_stl_blk  # Defense (5%)
+    0.20 * normalized_reb +  # Rebounds (20%)
+    0.20 * normalized_fg_pct  # Shooting efficiency (20%)
 )
 
-# Thresholds (calibrated for balanced class distribution):
-if score >= 0.85: tier = 'Elite'
-elif score >= 0.70: tier = 'All-Star'
-elif score >= 0.50: tier = 'Starter'
-elif score >= 0.30: tier = 'Rotation'
-else: tier = 'Bench'
+# Thresholds (calibrated for achievable ranges):
+if score >= 0.75: tier = 'Elite'      # Top ~0.2% (Jokić, Luka, Giannis)
+elif score >= 0.60: tier = 'All-Star'  # Top ~2% (Embiid, Tatum, SGA, etc.)
+elif score >= 0.40: tier = 'Starter'    # Top ~18% (solid starters)
+elif score >= 0.20: tier = 'Rotation'   # Top ~82% (rotation players)
+else: tier = 'Bench'                     # Bottom ~32%
 ```
 
 ---

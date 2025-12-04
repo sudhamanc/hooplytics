@@ -312,21 +312,23 @@ Demonstrates the model's strong performance across all tiers with minimal miscla
 | Actual \ Predicted | Bench | Rotation | Starter | All-Star | Elite |
 |-------------------|----------|----------|----------|----------|----------|
 | **Bench** | 93 | 0 | 0 | 0 | 0 |
-| **Rotation** | 2 | 208 | 4 | 0 | 0 |
-| **Starter** | 0 | 0 | 70 | 0 | 0 |
-| **All-Star** | 0 | 0 | 2 | 0 | 0 |
-| **Elite** | 0 | 0 | 0 | 0 | 0 |
+| **Rotation** | 6 | 206 | 2 | 0 | 0 |
+| **Starter** | 0 | 0 | 63 | 0 | 0 |
+| **All-Star** | 0 | 0 | 7 | 0 | 0 |
+| **Elite** | 0 | 0 | 0 | 2 | 0 |
 
 **Key Insights:**
-- **97.9% Test Accuracy** - Exceptional performance on holdout data (improved from 97.4%)
-- **Strong Diagonal** - Model correctly identifies 371/379 players (97.9%)
-- **Minimal Errors** - Only 8 misclassifications total, all between adjacent tiers
+- **95.5% Test Accuracy** - Strong performance on holdout data (362/379 correct)
 - **Perfect Bench Classification** - 93/93 Bench players correct (100%)
-- **Perfect Starter Classification** - 70/70 Starter players correct (100%)
-- **Near-Perfect Rotation** - 208/214 Rotation players correct (97.2%)
-- **Elite Tier Exists** - Training set includes 3 Elite players: Nikola Jokić (2024-25, 2025-26) and Luka Dončić (2023-24)
+- **Perfect Starter Classification** - 63/63 Starter players correct (100%)
+- **Near-Perfect Rotation** - 206/214 Rotation players correct (96.3%)
+- **Elite Tier Challenge** - 2 Elite players (Jokić, Luka) predicted as All-Star due to extreme class imbalance
+  - Only 3 Elite players in entire dataset (0.2%) vs 35 All-Stars (1.8%)
+  - Model conservatively predicts adjacent tier when uncertain
+- **Minimal Errors** - Only 17 misclassifications, all between adjacent tiers
+- **No Extreme Errors** - No Bench players misclassified as Elite or vice versa
 
-*The heatmap visualization above shows these exact prediction counts. The model achieves strong diagonal values (correct predictions) with minimal off-diagonal errors, and importantly avoids extreme misclassifications.*
+*The model demonstrates strong generalization with realistic error patterns. Elite tier classification will improve as more superstar seasons are added to the training data.*
 
 ### Feature Importance
 
@@ -573,12 +575,6 @@ Complex queries require sequencing multiple tools. The new `aggregate_roster_cla
    }
 3. Gemini summarizes → "The #1 seed has 3 Starter, 5 Rotation, and 8 Bench players"
 
-# Old inefficient pattern (15+ tool calls - now avoided):
-# 1. get_standings() → OKC Thunder
-# 2. get_team_roster('OKC Thunder') → ['Player1', 'Player2', ...]
-# 3. classify_player_tier('Player1') → 'Starter'
-# 4. classify_player_tier('Player2') → 'Rotation'
-# ... (13 more classification calls)
 ```
 
 ### 4. Tier Label Creation

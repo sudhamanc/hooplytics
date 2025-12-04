@@ -140,29 +140,26 @@ Hooplytics intelligently routes queries through different pathways based on the 
 
 ## 🚀 Installation
 
-### Option 1: MyBinder (Quick Demo - No Installation Required)
+### 🌐 Deploy on MyBinder (Alternative)
 
-**Perfect for:** Quick demos, testing, or if you don't want to install anything locally.
+Want to try Hooplytics without installing anything? Launch it on MyBinder!
 
-1. **Click the Binder badge** (add to top of README):
-   ```
-   [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sudhamanc/Hoop.io/main?urlpath=lab)
-   ```
+[![launch binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sudhamanc/hooplytics/main?urlpath=lab)
 
-2. **Wait for environment to build** (5-10 minutes first time, cached after)
+**Steps:**
 
-3. **Set your API key** in the JupyterLab terminal:
+1. Click the "launch binder" badge above
+2. Wait for the environment to build (first time takes ~5-10 minutes)
+3. Once loaded, open a terminal in JupyterLab
+4. Set your API key:
    ```bash
-   export GOOGLE_API_KEY='your-api-key-here'
+   export GOOGLE_API_KEY="your_key_here"
    ```
-   Get your free API key: https://makersuite.google.com/app/apikey
-
-4. **Start the app**:
+5. Start the app:
    ```bash
    ./binder/start_mybinder.sh
    ```
-
-5. **Click the generated URL** that appears in terminal output
+6. Click the generated URL that appears in terminal output
 
 **MyBinder Limitations:**
 - 2GB RAM limit (sufficient for this app)

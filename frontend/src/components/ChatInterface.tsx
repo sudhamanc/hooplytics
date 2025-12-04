@@ -7,6 +7,33 @@ interface Message {
   content: string;
   timestamp: Date;
   source?: string;
+  classification?: PlayerClassification;
+}
+
+interface PlayerClassification {
+  player_name: string;
+  team: string;
+  season: string;
+  classification: {
+    tier: string;
+    tier_id: number;
+    description: string;
+    color: string;
+    confidence: number;
+  };
+  tier_probabilities: {
+    [key: string]: number;
+  };
+  key_stats: {
+    games_played: number;
+    minutes_per_game: number;
+    points_per_game: number;
+    rebounds_per_game: number;
+    assists_per_game: number;
+    field_goal_pct: number;
+    three_point_pct: number;
+    free_throw_pct: number;
+  };
 }
 
 const ChatInterface: React.FC = () => {
@@ -61,11 +88,25 @@ const ChatInterface: React.FC = () => {
       }
 
       const data = await response.json();
+      
+      // Try to parse classification data if present in the response
+      let classificationData: PlayerClassification | undefined;
+      try {
+        // Check if the content contains player classification JSON
+        const jsonMatch = data.content.match(/\{[\s\S]*"player_name"[\s\S]*\}/);
+        if (jsonMatch) {
+          classificationData = JSON.parse(jsonMatch[0]);
+        }
+      } catch (e) {
+        // Not a classification response, that's okay
+      }
+      
       const assistantMessage: Message = {
         role: 'assistant',
         content: data.content,
         timestamp: new Date(),
-        source: data.source
+        source: data.source,
+        classification: classificationData
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
@@ -89,17 +130,17 @@ const ChatInterface: React.FC = () => {
       {/* Left Column: AI Responses / "The Feed" */}
       <div className="flex-1 flex flex-col relative z-10 h-full overflow-hidden">
         {/* Fixed Header Section - Aligned with right panel chat box */}
-        <header className="flex-none p-8 pt-[160px] bg-[#0f1014]/95 backdrop-blur-md z-20 shrink-0">
+        <header className="flex-none p-8 bg-[#0f1014]/95 backdrop-blur-md z-20 shrink-0 sticky top-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-600/10 flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0 border border-white/10">
               <span className="text-3xl">🏀</span>
             </div>
             <div className="min-w-0">
               <h1 className="text-2xl font-bold tracking-tight">
-                Hoop<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.io</span>
+                Hoop<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">lytics</span>
               </h1>
               <p className="text-slate-400 text-sm font-medium tracking-wide">
-                {messages.length > 0 ? 'Ready for Tip-Off' : 'NBA Intelligence Engine'}
+                NBA Intelligence Engine
               </p>
             </div>
           </div>
@@ -113,7 +154,7 @@ const ChatInterface: React.FC = () => {
                 <div className="text-5xl">🏀</div>
               </div>
               <h2 className="text-4xl font-bold mb-4">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Hoop.io</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Hooplytics</span>
               </h2>
               <h3 className="text-2xl font-semibold text-white mb-3">Ready for Tip-Off</h3>
               <p className="text-slate-400 max-w-md leading-relaxed text-lg">
@@ -144,6 +185,77 @@ const ChatInterface: React.FC = () => {
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
+                
+                {/* Player Classification Card */}
+                {msg.classification && (
+                  <div className="mb-6 p-6 rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/30 border border-white/10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-1">{msg.classification.player_name}</h3>
+                        <p className="text-sm text-slate-400">{msg.classification.team} • {msg.classification.season} Season</p>
+                      </div>
+                      <div className="text-right">
+                        <div 
+                          className="inline-block px-4 py-2 rounded-xl font-bold text-sm shadow-lg"
+                          style={{ 
+                            backgroundColor: msg.classification.classification.color + '20',
+                            color: msg.classification.classification.color,
+                            border: `2px solid ${msg.classification.classification.color}`
+                          }}
+                        >
+                          {msg.classification.classification.tier.toUpperCase()}
+                        </div>
+                        <p className="text-xs text-slate-500 mt-2">
+                          {msg.classification.classification.confidence.toFixed(1)}% confidence
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-slate-300 mb-4 italic">
+                      {msg.classification.classification.description}
+                    </p>
+                    
+                    {/* Key Stats Grid */}
+                    <div className="grid grid-cols-4 gap-3 mb-4">
+                      <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-blue-400">{msg.classification.key_stats.points_per_game.toFixed(1)}</p>
+                        <p className="text-xs text-slate-500 mt-1">PPG</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-green-400">{msg.classification.key_stats.rebounds_per_game.toFixed(1)}</p>
+                        <p className="text-xs text-slate-500 mt-1">RPG</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-purple-400">{msg.classification.key_stats.assists_per_game.toFixed(1)}</p>
+                        <p className="text-xs text-slate-500 mt-1">APG</p>
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-amber-400">{(msg.classification.key_stats.field_goal_pct * 100).toFixed(1)}%</p>
+                        <p className="text-xs text-slate-500 mt-1">FG%</p>
+                      </div>
+                    </div>
+                    
+                    {/* Tier Probabilities */}
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Tier Probabilities</p>
+                      {Object.entries(msg.classification.tier_probabilities)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([tier, prob]) => (
+                          <div key={tier} className="flex items-center gap-3">
+                            <span className="text-xs text-slate-400 w-20 font-medium">{tier}</span>
+                            <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+                                style={{ width: `${prob}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-slate-500 w-12 text-right font-mono">{prob.toFixed(1)}%</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="prose prose-invert max-w-none prose-p:text-slate-300 prose-p:leading-loose prose-headings:text-white prose-strong:text-blue-300 prose-a:text-purple-400 prose-table:border-collapse prose-th:border prose-th:border-slate-600 prose-th:bg-slate-800 prose-th:p-3 prose-td:border prose-td:border-slate-700 prose-td:p-3">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                 </div>
@@ -168,7 +280,7 @@ const ChatInterface: React.FC = () => {
       {/* Right Column: Control Panel */}
       <div className="w-[450px] bg-[#13141c]/90 backdrop-blur-2xl border-l border-white/5 flex flex-col z-20 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] h-full">
         {/* Chat Input Form */}
-        <div className="flex-none p-8 pt-40 border-b border-white/5">
+        <div className="flex-none p-8 pt-[195px] border-b border-white/5">
           <form onSubmit={handleSubmit} className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
             <div className="relative bg-[#0f1014] rounded-xl overflow-hidden border border-white/5">
@@ -209,13 +321,13 @@ const ChatInterface: React.FC = () => {
         {/* Chat away with Hoop.io - Between Send and History */}
         <div className="flex-none px-8 py-6 border-b border-white/5">
           <h2 className="text-xl font-bold text-white mb-1">
-            Chat away with <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Hoop.io</span>
+            Chat away with <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Hooplytics</span>
           </h2>
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">AI-Powered NBA Assistant</p>
         </div>
 
         {/* History Section */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-8 min-h-0">
           <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-6">History</h3>
           <div className="space-y-4">
             {messages.filter(m => m.role === 'user').slice().reverse().map((msg, i) => (
@@ -244,22 +356,27 @@ const ChatInterface: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex-none p-8 border-t border-white/5 bg-black/20">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="flex-none p-6 border-t border-white/5 bg-black/20">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Quick Actions</h3>
+          <div className="grid grid-cols-3 gap-2 max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700">
             {[
-              { label: "Live Games", icon: "⏱️" },
-              { label: "Standings", icon: "🏆" },
-              { label: "LeBron Stats", icon: "👑" },
-              { label: "Curry 3PM", icon: "👌" }
+              { label: "Today's Games", icon: "🏀", query: "What are today's NBA games?" },
+              { label: "NBA History", icon: "🏆", query: "Who won the 2020 NBA championship?" },
+              { label: "Upsets Today", icon: "⚡", query: "Are there any upsets in today's games?" },
+              { label: "#1 Seed Tiers", icon: "⭐", query: "Give me counts by classification for all the players in the #1 seeded team" },
+              { label: "Classify LeBron", icon: "👑", query: "Classify LeBron James" },
+              { label: "Standings", icon: "📊", query: "Show current NBA standings" },
+              { label: "Player Stats", icon: "📈", query: "Get Stephen Curry stats" },
+              { label: "Team Roster", icon: "👥", query: "Get Lakers roster" },
+              { label: "Weather Test", icon: "🌤️", query: "What's the weather today?" }
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => setInput(item.label)}
-                className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 transition-all text-left group"
+                onClick={() => setInput(item.query)}
+                className="flex items-center gap-1.5 p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 transition-all text-left group"
               >
-                <span className="text-lg grayscale group-hover:grayscale-0 transition-all">{item.icon}</span>
-                <span className="text-xs font-medium text-slate-400 group-hover:text-white transition-colors">{item.label}</span>
+                <span className="text-sm grayscale group-hover:grayscale-0 transition-all">{item.icon}</span>
+                <span className="text-[10px] font-medium text-slate-400 group-hover:text-white transition-colors leading-tight">{item.label}</span>
               </button>
             ))}
           </div>

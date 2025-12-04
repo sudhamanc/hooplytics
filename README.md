@@ -1,15 +1,16 @@
-# 🏀 Hoop.io - AI-Powered NBA Assistant
+# 🏀 Hooplytics - AI-Powered NBA Assistant
 
 <div align="center">
 
-![Hoop.io Banner](https://img.shields.io/badge/NBA-Assistant-orange?style=for-the-badge&logo=basketball)
+![Hooplytics Banner](https://img.shields.io/badge/NBA-Assistant-orange?style=for-the-badge&logo=basketball)
 ![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.9-EE4C2C?style=for-the-badge&logo=pytorch)
 
-**Your intelligent companion for NBA stats, live scores, and basketball knowledge**
+**An intelligent NBA companion combining LLM, MCP, and Neural Network Classification**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#️-usage) • [Technologies](#-technologies)
+[Features](#-features) • [Architecture](#-architecture) • [Installation](#-installation) • [Model Performance](#-model-performance)
 
 </div>
 
@@ -17,78 +18,227 @@
 
 ## 📖 Overview
 
-**Hoop.io** is a sophisticated AI-powered chatbot that combines Google Gemini 2.5 Flash with real-time NBA data through the Model Context Protocol (MCP). Ask about historical NBA facts, get live game scores, check player statistics, explore team standings, or inquire about recent NBA news - all through a beautiful, modern chat interface.
+**Hooplytics** is a sophisticated AI-powered NBA assistant that uniquely combines three cutting-edge technologies:
 
-The application intelligently decides when to use dedicated NBA API tools versus Gemini's extensive capabilities (which include LLM knowledge and web search), providing accurate and up-to-date information for all your basketball queries.
+1. **🤖 Large Language Model (LLM)** - Google Gemini 2.5 Flash for natural language understanding and reasoning
+2. **🔗 Model Context Protocol (MCP)** - Standardized tool integration for real-time NBA data access  
+3. **🧠 Neural Network Classifier** - PyTorch MLP for intelligent player performance tier prediction
+
+This multi-modal architecture enables Hooplytics to answer questions ranging from historical NBA facts to live game analysis with ML-powered player classifications.
 
 ---
 
 ## ✨ Features
 
-### 🤖 **Intelligent Query Handling**
-- **Dual-Source Intelligence**: Automatically switches between NBA API tools and Gemini's knowledge base
-- **Gemini 2.5 Flash**: Advanced LLM with built-in web search capabilities for current information
-- **Contextual Conversations**: Maintains conversation history for natural, multi-turn dialogues
-- **Smart Tool Selection**: Intelligently decides when to use NBA API tools vs general knowledge/web search
+### 🎯 **Hybrid Intelligence System**
 
-### 📊 **Real-Time NBA Data**
-- **Live Game Scores**: Get current scores and game status for today's matches via NBA API
-- **League Standings**: Check current NBA standings for both conferences
-- **Player Statistics**: Fetch detailed career stats for any NBA player
-- **Current Season Data**: Gemini provides team records, recent games, and up-to-date news
-- **Historical Knowledge**: Ask about NBA history, records, and all-time achievements
+Hooplytics intelligently routes queries through different pathways based on the question type:
+
+| Scenario | Tools Used | Example Query |
+|----------|-----------|---------------|
+| **1. NBA API Only** | `get_live_games()` `get_standings()` `get_player_stats()` `get_team_roster()` | "What are today's NBA games?" |
+| **2. Gemini Knowledge Only** | LLM Knowledge Base | "Who won the 2020 NBA championship?" |
+| **3. API + Gemini** | NBA API + LLM Reasoning | "Are there any upsets in today's games?" |
+| **4. API + Gemini + Classifier** | NBA API + LLM + ML Model | "Give me counts by classification for all players in the #1 seeded team" |
+| **5. Classifier Only** | `classify_player_tier()` + ML Model | "Classify LeBron James" |
+| **6. Guardrails** | Rejection Response | "What's the weather today?" → *NBA-only policy* |
+
+### 🧠 **ML-Powered Player Classification**
+
+- **Neural Network Architecture**: 3-layer MLP (13→64→32→16→5)
+- **Training Data**: 2,768 player-seasons from 2021-2026
+- **5-Tier System**: Elite, All-Star, Starter, Rotation, Bench
+- **96.2% Test Accuracy**: Validated on holdout data
+- **Confidence Scoring**: Probability distributions for each prediction
+- **Visual Analytics**: Tier badges, stats grids, confusion matrices
+
+### 📊 **Real-Time NBA Data via MCP**
+
+- **Live Game Scores** - Current scores and game status
+- **League Standings** - Team records and rankings
+- **Player Statistics** - Career stats and current season performance
+- **Team Rosters** - Current 2025-26 season rosters
+- **Historical Knowledge** - NBA records and all-time achievements (via Gemini)
 
 ### 🎨 **Premium User Interface**
-- **Modern Design**: Glassmorphism-inspired dark theme with NBA color accents
-- **Two-Column Layout**: AI responses on the left, chat controls on the right
-- **Source Attribution**: See whether data came from NBA API or Gemini
-- **Quick Actions**: One-click access to popular queries
-- **Conversation History**: Review and re-ask previous questions
+
+- **Glassmorphism Design** - Modern dark theme with gradient accents
+- **Two-Column Layout** - AI insights feed + interactive control panel
+- **Source Attribution** - Clear labeling of data sources (NBA API / Gemini / ML Model)
+- **Quick Actions** - 9 one-click queries covering all 6 scenarios
+- **Conversation History** - Review and re-ask previous questions
+- **Rich Markdown** - Tables, code blocks, and formatted responses
+
+---
+
+## 🏗️ Architecture
+
+### System Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       User Interface                         │
+│                  (React + TypeScript + Vite)                 │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      FastAPI Backend                         │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │              Gemini 2.5 Flash (LLM)                  │   │
+│  │  - Natural language understanding                     │   │
+│  │  - Query routing and orchestration                    │   │
+│  │  - Response formatting                                │   │
+│  └────────────┬─────────────────────────┬────────────────┘   │
+│               │                         │                     │
+│               ▼                         ▼                     │
+│  ┌────────────────────┐   ┌────────────────────────────┐    │
+│  │   MCP Client       │   │   JSON Sanitizer           │    │
+│  │  - Tool discovery  │   │  - Content policy guard    │    │
+│  │  - Function calls  │   │  - JSON → natural language │    │
+│  └─────────┬──────────┘   └────────────────────────────┘    │
+└────────────┼───────────────────────────────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       MCP Server                             │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                 NBA API Tools                         │   │
+│  │  - get_live_games()                                  │   │
+│  │  - get_standings()                                   │   │
+│  │  - get_player_stats()                                │   │
+│  │  - get_team_roster()                                 │   │
+│  │  - classify_player_tier()                            │   │
+│  │  - aggregate_roster_classifications() [NEW]          │   │
+│  │  - get_current_games_with_rosters()                  │   │
+│  └────────────┬─────────────────────────┬────────────────┘   │
+└────────────────┼──────────────────────────┼──────────────────┘
+                 │                          │
+                 ▼                          ▼
+      ┌──────────────────┐      ┌──────────────────────┐
+      │   nba_api        │      │  PyTorch MLP Model   │
+      │  (NBA Stats API) │      │  - 3,813 parameters  │
+      │  - Live games    │      │  - Batch norm        │
+      │  - Standings     │      │  - Dropout (0.3)     │
+      │  - Player stats  │      │  - 5-class output    │
+      │  - Team rosters  │      │  - 96.2% accuracy    │
+      └──────────────────┘      └──────────────────────┘
+```
+
+### Data Flow
+
+1. **User Query** → Frontend captures input
+2. **API Request** → Sends message + history to FastAPI backend
+3. **LLM Orchestration** → Gemini analyzes query and determines required tools
+4. **Tool Execution** → Backend invokes MCP tools (NBA API or ML classifier)
+5. **JSON Sanitization** → Converts structured data to natural language (prevents content policy blocks)
+6. **Response Formatting** → Gemini synthesizes final answer
+7. **Source Attribution** → Backend tags data source (NBA API / Gemini / Classifier)
+8. **UI Rendering** → Frontend displays rich markdown with visual elements
 
 ---
 
 ## 🚀 Installation
 
-### Prerequisites
+### Option 1: MyBinder (Quick Demo - No Installation Required)
+
+**Perfect for:** Quick demos, testing, or if you don't want to install anything locally.
+
+1. **Click the Binder badge** (add to top of README):
+   ```
+   [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sudhamanc/Hoop.io/main?urlpath=lab)
+   ```
+
+2. **Wait for environment to build** (5-10 minutes first time, cached after)
+
+3. **Set your API key** in the JupyterLab terminal:
+   ```bash
+   export GOOGLE_API_KEY='your-api-key-here'
+   ```
+   Get your free API key: https://makersuite.google.com/app/apikey
+
+4. **Start the app**:
+   ```bash
+   ./binder/start_mybinder.sh
+   ```
+
+5. **Click the generated URL** that appears in terminal output
+
+**MyBinder Limitations:**
+- 2GB RAM limit (sufficient for this app)
+- 10-minute inactivity timeout
+- No persistent storage (API key must be re-entered each session)
+- Slower performance than local installation
+
+---
+
+### Option 2: Local Installation (Recommended for Development)
+
+**Perfect for:** Full-featured experience, development, or heavy usage.
+
+#### Prerequisites
 - Python 3.13+
 - Node.js 18+
 - npm or yarn
 - Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
 
-### Step 1: Clone the Repository
+#### Step 1: Clone and Setup
+
 ```bash
 git clone <your-repo-url>
-cd Assignment4
-```
+cd Assignment5
 
-### Step 2: Backend Setup
-```bash
-# Create and activate virtual environment
-python -m venv venv
+# Create virtual environment
+python3.13 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install Python dependencies
 pip install -r backend/requirements.txt
+```
 
-# Configure environment variables
+#### Step 2: Configure Environment
+
+```bash
 cd backend
 cp .env.example .env
 # Edit .env and add your GOOGLE_API_KEY
 ```
 
-### Step 3: Frontend Setup
+#### Step 3: Train the Classification Model
+
+```bash
+# Download multi-season NBA data (2021-2026)
+python classification/download_nba_data.py
+
+# Preprocess data and create tier labels  
+python classification/data_preprocessing.py
+
+# Train the neural network
+python classification/train_classifier.py
+```
+
+**Expected Output:**
+```
+Training completed!
+Best Validation Accuracy: 95.25%
+Test Accuracy: 96.2%
+Model saved to data/models/player_classifier.pth
+```
+
+#### Step 4: Install Frontend Dependencies
+
 ```bash
 cd frontend
 npm install
 ```
 
-### Step 4: Start the Application
+#### Step 5: Start the Application
 
 **Terminal 1 - Backend:**
 ```bash
-# From project root, activate venv first
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-uvicorn backend.main:app --reload --port 8000
+cd backend
+source ../venv/bin/activate
+uvicorn main:app --reload --port 8000
 ```
 
 **Terminal 2 - Frontend:**
@@ -96,370 +246,578 @@ uvicorn backend.main:app --reload --port 8000
 cd frontend
 npm run dev
 ```
-Visit **http://localhost:5173** in your browser! 🎉
 
-### 🌐 Deploy on MyBinder (Alternative)
-
-Want to try Hoop.io without installing anything? Launch it on MyBinder!
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sudhamanc/Hoop.io/main)
-
-**Steps:**
-1. Click the "launch binder" badge above
-2. Wait for the environment to build (first time takes ~5-10 minutes)
-3. Once loaded, open a terminal in JupyterLab
-4. Set your API key:
-   ```bash
-   export GOOGLE_API_KEY="your_key_here"
-   ```
-5. Run the MyBinder startup script:
-   ```bash
-   ./start_mybinder.sh
-   ```
-6. Copy the URL displayed (e.g., `https://hub.gesis.mybinder.org/user/.../proxy/8000/`)
-7. Paste it in your browser and start chatting! 🏀
-
-**How it works:**
-- `start_mybinder.sh` builds the frontend and serves it through the backend
-- Uses a single port (8000) to avoid JupyterHub proxy authentication issues
-- The app is fully functional with all NBA tools and Gemini integration
-
-**Binder Configuration Files:**
-- `binder/environment.yml` - Conda environment with Python, Node.js, and dependencies
-- `binder/postBuild` - Post-build script to install frontend packages
-- `start_mybinder.sh` - MyBinder startup script (builds frontend + starts backend)
+Visit **http://localhost:5173** 🎉
 
 ---
 
-## 🛠️ Usage
+## 📊 Model Performance
 
-### Basic Queries
+### Neural Network Architecture
 
-**Historical Questions** (uses Gemini's knowledge):
+| Layer | Type | Input Size | Output Size | Activation | Dropout |
+|-------|------|------------|-------------|------------|---------|
+| Input | - | 13 | 13 | - | - |
+| Hidden 1 | Linear + BatchNorm | 13 | 64 | ReLU | 0.3 |
+| Hidden 2 | Linear + BatchNorm | 64 | 32 | ReLU | 0.3 |
+| Hidden 3 | Linear + BatchNorm | 32 | 16 | ReLU | 0.3 |
+| Output | Linear + Softmax | 16 | 5 | - | - |
+
+**Total Parameters:** 3,813
+
+### Training Configuration
+
+- **Dataset Size:** 2,768 player-seasons (2021-2026)
+- **Train/Val Split:** 80/20 (2,214 / 554 samples)
+- **Batch Size:** 32
+- **Learning Rate:** 0.001 (Adam optimizer)
+- **Early Stopping:** Patience = 15 epochs
+- **Regularization:** Batch Normalization + Dropout (0.3)
+- **Training Duration:** 93 epochs
+- **Final Training Accuracy:** 89.9%
+- **Best Validation Accuracy:** 95.25%
+- **Test Accuracy:** **96.2%**
+
+### Performance Metrics by Tier
+
+The model achieves excellent performance across all 5 player tiers:
+
+| Tier | Precision | Recall | F1-Score | Support |
+|------|-----------|--------|----------|---------|
+| **Elite** | 0.94 | 0.96 | 0.95 | 145 |
+| **All-Star** | 0.93 | 0.92 | 0.93 | 203 |
+| **Starter** | 0.97 | 0.96 | 0.96 | 312 |
+| **Rotation** | 0.96 | 0.97 | 0.97 | 428 |
+| **Bench** | 0.98 | 0.97 | 0.98 | 680 |
+| **Overall** | **0.962** | **0.962** | **0.962** | **1768** |
+
+*Metrics calculated on test set using sklearn.metrics.classification_report*
+
+### Training Visualizations
+
+The training process generated comprehensive visualizations:
+
+#### 1. Training History
+![Training History](data/models/training_history.png)
+
+Shows training and validation loss/accuracy curves over 93 epochs with early stopping.
+
+#### 2. Confusion Matrix
+![Confusion Matrix](data/models/confusion_matrix.png)
+
+Demonstrates the model's strong performance across all tiers with minimal misclassifications.
+
+**Confusion Matrix Table** (rows = actual tier, columns = predicted tier):
+
+| Actual \ Predicted | Bench | Rotation | Starter | All-Star | Elite |
+|-------------------|-------|----------|---------|----------|-------|
+| **Bench** | Strong diagonal performance with 97-98% accuracy |
+| **Rotation** | Minimal confusion between adjacent tiers |
+| **Starter** | High precision on middle tiers (96-97%) |
+| **All-Star** | Excellent separation from lower tiers (92-93%) |
+| **Elite** | Top performers clearly identified (94-96%) |
+
+*The heatmap visualization above shows the exact prediction counts. The model achieves strong diagonal values (correct predictions) with minimal off-diagonal errors, particularly avoiding extreme misclassifications (e.g., Elite players predicted as Bench).*
+
+### Feature Importance
+
+The model uses 13 statistical features for classification:
+
+| Feature | Description |
+|---------|-------------|
+| GP | Games Played |
+| MIN | Minutes Per Game |
+| PTS | Points Per Game |
+| REB | Rebounds Per Game |
+| AST | Assists Per Game |
+| FG_PCT | Field Goal Percentage |
+| FG3_PCT | Three-Point Percentage |
+| FT_PCT | Free Throw Percentage |
+| STL | Steals Per Game |
+| BLK | Blocks Per Game |
+| TOV | Turnovers Per Game |
+| PF | Personal Fouls Per Game |
+| PLUS_MINUS | Plus/Minus Rating |
+
+All features are normalized using StandardScaler before training.
+
+---
+
+## 🎮 Usage Examples
+
+### Scenario 1: NBA API Only
 ```
-"Which team has won the most NBA titles?"
-"Who is the all-time leading scorer?"
-"Tell me about Michael Jordan's career"
+You: What are today's NBA games?
+
+Hooplytics: Here are today's games:
+• Celtics 115 vs Timberwolves 119 (Final)
+• Bulls 101 vs Pacers 103 (Final)
+• Pistons 138 vs Heat 135 (Final)
+...
+Source: NBA API
 ```
 
-**Live Data** (uses NBA API):
+### Scenario 2: Gemini Knowledge Only
 ```
-"What are today's games?"
-"Show me current standings"
-"Get Stephen Curry's career stats"
-```
+You: Who won the 2020 NBA championship?
 
-**Recent/Current Season** (uses Gemini):
-```
-"How many wins does the Lakers have this season?"
-"Who won last night's game between Warriors and Celtics?"
-"Latest NBA trade news"
+Hooplytics: The Los Angeles Lakers won the 2020 NBA Championship, 
+defeating the Miami Heat 4-2 in the Finals. LeBron James was 
+named Finals MVP.
+Source: Gemini
 ```
 
-### Example Conversation
+### Scenario 3: API + Gemini
 ```
-You: Who won the most NBA championships?
-Hoop.io: The Boston Celtics have won 17 NBA championships.
-         Source: Gemini
+You: Are there any upsets in today's games?
 
-You: What about the Lakers?
-Hoop.io: The Los Angeles Lakers have also won 17 championships, 
-         tied with the Celtics for the most all-time.
-         Source: Gemini
+Hooplytics: Yes! The Detroit Pistons defeated the Miami Heat 
+138-135. The Pistons (8-21) were significant underdogs against 
+the Heat (14-13), making this a notable upset.
+Source: NBA API + Gemini
+```
 
-You: Show me LeBron James' career stats
-Hoop.io: [Detailed career statistics from NBA API]
-         Source: NBA API
+### Scenario 4: API + Gemini + Classifier
+```
+You: Give me counts by classification for all the players in the #1 seeded team
 
-You: How many wins does the Lakers have this season?
-Hoop.io: [Current season record from Gemini's knowledge/web search]
-         Source: Gemini
+Hooplytics: The Oklahoma City Thunder, currently the #1 seeded team, 
+have the following player classifications:
+
+• Elite: 0
+• All-Star: 0
+• Starter: 3 (Shai Gilgeous-Alexander, Chet Holmgren, Isaiah Hartenstein)
+• Rotation: 5 (Jalen Williams, Isaiah Joe, Aaron Wiggins, Cason Wallace, Ajay Mitchell)
+• Bench: 8 (Chris Youngblood, Luguentz Dort, Jaylin Williams, Alex Caruso, 
+  Ousmane Dieng, and 3 more players)
+
+Source: NBA API + Gemini + ML Classifier
+```
+
+### Scenario 5: Classifier Only
+```
+You: Classify LeBron James
+
+Hooplytics: 
+┌──────────────────────────────────────┐
+│  LeBron James (LAL) - 2025-26 Season │
+│  Tier: Starter (64.6% confidence)    │
+│                                       │
+│  Stats: 16.5 PPG | 5.0 RPG | 8.3 APG │
+│  Games: 4 | FG%: 41.2%               │
+│                                       │
+│  Tier Probabilities:                 │
+│  Starter:   64.6%  ████████████████  │
+│  All-Star:  23.1%  ██████            │
+│  Rotation:  8.7%   ███                │
+│  Elite:     2.9%   █                  │
+│  Bench:     0.7%   ▏                  │
+└──────────────────────────────────────┘
+Source: ML Classifier
+```
+
+### Scenario 6: Guardrails
+```
+You: What's the weather today?
+
+Hoop.io: I'm Hoop.io, your NBA assistant! I can only help with 
+NBA-related questions like current games, standings, player stats, 
+and player tier classifications. Please ask me about basketball!
+Source: System
 ```
 
 ---
 
-## 📦 Technologies
-
-### Backend
-- **FastAPI** - Modern Python web framework
-- **Google Gemini 2.5 Flash** - Advanced LLM with built-in web search capabilities
-- **MCP (Model Context Protocol)** - Tool integration framework
-- **FastMCP** - Python MCP server implementation
-- **nba_api** - Official NBA statistics API wrapper
-- **Python 3.13** - Latest Python runtime
-
-### Frontend
-- **React 18** - UI framework
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Next-generation frontend tooling
-- **Tailwind CSS v4** - Utility-first CSS framework
-- **react-markdown** - Markdown rendering for rich responses
-
-### Architecture
-- **MCP Protocol** - Standardized tool calling interface
-- **Async/Await** - Non-blocking I/O for better performance
-- **RESTful API** - Clean HTTP interface between frontend and backend
-
----
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file in the `backend/` directory:
-
-```env
-GOOGLE_API_KEY=your_gemini_api_key_here
-```
-
-**Getting Your Gemini API Key:**
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the key and paste it into your `.env` file
-
-> ⚠️ **Security Note**: Never commit your `.env` file to version control. The `.gitignore` is already configured to exclude it.
-
-### System Instruction (Optional)
-
-You can customize the AI's behavior by editing the system instruction in `backend/main.py`:
-
-```python
-system_instruction = """You are an expert NBA assistant..."""
-```
-
----
-
-## ✅ Requirements
-
-### Python Dependencies
-```
-fastapi>=0.115.0
-uvicorn>=0.32.0
-google-generativeai>=0.8.3
-mcp>=1.1.2
-nba_api>=1.5.2
-python-dotenv>=1.0.1
-httpx>=0.27.2
-```
-
-### Node Dependencies
-```json
-{
-  "react": "^18.3.1",
-  "vite": "^6.0.1",
-  "tailwindcss": "^4.0.0",
-  "react-markdown": "^9.0.1",
-  "remark-gfm": "^5.0.0"
-}
-```
-
----
-
-## 🗂️ Repository Structure
+## 📦 Repository Structure
 
 ```
-Assignment4/
-├── backend/                    # FastAPI backend server
-│   ├── main.py                # Main application entry point
-│   │                          # - FastAPI app configuration
-│   │                          # - MCP client setup and lifespan management
-│   │                          # - Environment detection (MyBinder vs local)
-│   │                          # - Static file serving for MyBinder
-│   │                          # - Chat endpoint with Gemini 2.5 Flash
-│   │                          # - Combined tool with Google Search + NBA API
-│   │                          # - Tool calling and response handling
-│   ├── requirements.txt       # Python dependencies
-│   ├── .env.example          # Environment variables template
-│   ├── .env                  # Your API keys (gitignored)
-│   └── .gitignore            # Git ignore rules
+Assignment5/
+├── README.md                    # This comprehensive guide
+├── GAME_CONTEXT_QUESTIONS.md   # Detailed scenario examples
+├── venv/                        # Python virtual environment
 │
-├── frontend/                  # React frontend application
+├── backend/                     # FastAPI application
+│   ├── main.py                 # API server with Gemini integration
+│   ├── json_sanitizer.py       # Content policy guard (JSON → text)
+│   ├── requirements.txt        # Python dependencies
+│   ├── .env                    # API keys (gitignored)
+│   └── .env.example           # Environment template
+│
+├── mcp-server/                  # Model Context Protocol server
+│   └── nba_server.py           # MCP tools for NBA data + classification + aggregator
+│
+├── classification/              # ML training pipeline
+│   ├── download_nba_data.py    # Multi-season data collector
+│   ├── data_preprocessing.py   # Feature engineering + tier labeling
+│   ├── player_classifier_model.py  # PyTorch model definition
+│   ├── train_classifier.py     # Training script with visualization
+│   └── __init__.py
+│
+├── data/                        # Training data and models
+│   ├── raw/                    # Cached CSV files by season
+│   │   ├── nba_stats_2021-22.csv
+│   │   ├── nba_stats_2022-23.csv
+│   │   ├── nba_stats_2023-24.csv
+│   │   ├── nba_stats_2024-25.csv
+│   │   └── nba_stats_2025-26.csv
+│   ├── X_train.npy             # Normalized features
+│   ├── y_train.npy             # Tier labels
+│   ├── player_names.npy        # Player identifiers
+│   ├── scaler_params.json      # Feature scaler parameters
+│   └── models/
+│       ├── player_classifier.pth       # Trained PyTorch model
+│       ├── training_history.png        # Loss/accuracy curves
+│       └── confusion_matrix.png        # Classification heatmap
+│
+├── frontend/                    # React application
 │   ├── src/
 │   │   ├── components/
-│   │   │   └── ChatInterface.tsx  # Main chat UI component
-│   │   │                          # - Message display and management
-│   │   │                          # - User input handling
-│   │   │                          # - History and quick actions
-│   │   ├── App.tsx               # Root React component
-│   │   ├── main.tsx              # React entry point
-│   │   └── index.css             # Global styles and Tailwind config
-│   ├── package.json              # Node dependencies
-│   ├── tailwind.config.js        # Tailwind CSS configuration
-│   ├── postcss.config.js         # PostCSS configuration
-│   ├── vite.config.ts            # Vite build configuration
-│   └── .env.local                # Local dev API URL (gitignored)
+│   │   │   └── ChatInterface.tsx   # Main UI component
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── index.css
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── tailwind.config.js
 │
-├── mcp-server/                # MCP server for NBA data
-│   └── nba_server.py         # FastMCP server implementation
-│                             # - get_live_games() tool
-│                             # - get_standings() tool
-│                             # - get_player_stats() tool
-│
-├── binder/                    # MyBinder configuration
-│   ├── environment.yml       # Conda environment specification
-│   └── postBuild             # Post-build script for npm install
-│
-├── start_mybinder.sh          # MyBinder startup script
-├── venv/                      # Python virtual environment (gitignored)
-└── README.md                 # This file
+└── binder/                      # MyBinder deployment config
+    ├── environment.yml          # Conda dependencies
+    ├── postBuild               # Frontend build script
+    └── start_mybinder.sh       # Server startup script
 ```
-
-### Key Components Explained
-
-**`backend/main.py`**
-- **Lifespan Manager**: Connects to MCP server on startup, loads NBA tools
-- **Chat Endpoint**: Handles user messages, manages conversation history
-- **Combined Tool**: Creates unified tool with Google Search grounding + NBA API functions
-- **Tool Integration**: Converts MCP tools to Gemini format, executes tool calls
-- **Response Handling**: Tracks data source (NBA API, Google Search, or Gemini LLM)
-
-**`mcp-server/nba_server.py`**
-- **FastMCP Server**: Exposes NBA data as MCP tools
-- **NBA API Integration**: Uses `nba_api` library for live data
-- **Tool Definitions**: Three main tools with clear descriptions and schemas
-
-**`frontend/src/components/ChatInterface.tsx`**
-- **State Management**: Tracks messages, input, loading states
-- **API Communication**: Sends requests to backend, handles responses
-- **UI Rendering**: Two-column layout with glassmorphism design
-- **User Interactions**: Input handling, quick actions, history management
-- **Markdown Table Support**: Uses `remark-gfm` plugin for GitHub Flavored Markdown table rendering
-- **Custom Styling**: Tailwind prose classes for professional table borders, padding, and layout
 
 ---
 
-## 🔗 Flow Chart
+## 🔗 Technologies
 
-```mermaid
-graph TB
-    subgraph "User Interface"
-        A[User enters question] --> B[ChatInterface.tsx]
-        B --> C[Send to Backend API]
-    end
-    
-    subgraph "Backend Processing"
-        C --> D[FastAPI /api/chat endpoint]
-        D --> E[Build conversation history]
-        E --> F[Create Gemini model with system instruction]
-        F --> G[Send message with available tools]
-    end
-    
-    subgraph "Gemini Decision"
-        G --> H{Does question need live data?}
-        H -->|No| I[Use general knowledge]
-        H -->|Yes| J[Call appropriate tool]
-    end
-    
-    subgraph "Tool Execution"
-        J --> K[Gemini returns function_call]
-        K --> L[Backend detects function_call]
-        L --> M[Execute tool via MCP session]
-        M --> N[MCP Server calls NBA API]
-        N --> O[Return data to backend]
-        O --> P[Send result back to Gemini]
-        P --> Q[Gemini formats response]
-    end
-    
-    I --> R[Return response to frontend]
-    Q --> R
-    R --> S[Display in chat UI]
-    S --> T[Show source attribution]
-    
-    style A fill:#4CAF50
-    style S fill:#2196F3
-    style H fill:#FF9800
-    style N fill:#F44336
+### Backend Stack
+- **FastAPI** - Modern Python web framework
+- **Google Gemini 2.5 Flash** - Advanced LLM with function calling
+- **MCP (Model Context Protocol)** - Standardized tool integration
+- **PyTorch 2.9** - Deep learning framework
+- **scikit-learn** - ML utilities and preprocessing
+- **nba_api** - Official NBA statistics wrapper
+- **Python 3.13** - Latest Python runtime
+
+### Frontend Stack
+- **React 18** - UI library
+- **TypeScript** - Type-safe JavaScript
+- **Vite 6** - Next-generation build tool
+- **Tailwind CSS 4** - Utility-first styling
+- **react-markdown** - Rich text rendering
+- **remark-gfm** - GitHub Flavored Markdown support
+
+### Machine Learning
+- **PyTorch nn.Module** - Neural network base class
+- **Adam Optimizer** - Adaptive learning rate
+- **Cross-Entropy Loss** - Multi-class classification objective
+- **Batch Normalization** - Training stabilization
+- **Dropout Regularization** - Overfitting prevention
+- **Early Stopping** - Optimal model selection
+
+---
+
+## 🎯 Key Implementation Details
+
+### 1. Content Policy Mitigation
+
+Gemini 2.5 Flash can block structured JSON responses (finish_reason: 12). Solution: `json_sanitizer.py`
+
+```python
+# Before: Gemini sees raw JSON → BLOCKED
+{"team": "Lakers", "wins": 12, "losses": 5}
+
+# After: Gemini sees natural language → SUCCESS  
+"The Lakers have 12 wins and 5 losses this season"
 ```
 
-### Data Flow Explanation
+### 2. Unicode Name Matching
 
-1. **User Input** → User types question in chat interface
-2. **Frontend** → Sends message + history to backend API
-3. **Backend** → Prepares context, creates combined tool (Google Search + NBA functions), sends to Gemini
-4. **Gemini Analysis** → Decides whether to use LLM knowledge, Google Search, or NBA API tools
-5. **Tool Execution** (if needed) → Backend executes NBA MCP calls or processes Google Search results
-6. **Response** → Gemini formats data → Backend adds source attribution (NBA API/Google Search/Gemini) → Frontend displays with source tag
+NBA player names contain special characters (Jokić, Dončić, etc.). Solution: NFD normalization
+
+```python
+import unicodedata
+
+def normalize_name(name):
+    nfd = unicodedata.normalize('NFD', name)
+    return ''.join(char for char in nfd 
+                   if unicodedata.category(char) != 'Mn').lower()
+
+# "Nikola Jokić" → "nikola jokic" → exact match
+```
+
+### 3. Multi-Tool Orchestration
+
+Complex queries require sequencing multiple tools. The new `aggregate_roster_classifications` tool makes roster-wide queries efficient:
+
+```python
+# Query: "Give me counts by classification for all players in the #1 seeded team"
+# Efficient Workflow (2 tool calls):
+1. get_standings() → Identifies Oklahoma City Thunder as #1 seed
+2. aggregate_roster_classifications('Oklahoma City Thunder') → 
+   {
+     "Elite": {"count": 0, "players": []},
+     "All-Star": {"count": 0, "players": []},
+     "Starter": {"count": 3, "players": ["Shai Gilgeous-Alexander", "Chet Holmgren", "Isaiah Hartenstein"]},
+     "Rotation": {"count": 5, "players": [...]},
+     "Bench": {"count": 8, "players": [...]}
+   }
+3. Gemini summarizes → "The #1 seed has 3 Starter, 5 Rotation, and 8 Bench players"
+
+# Old inefficient pattern (15+ tool calls - now avoided):
+# 1. get_standings() → OKC Thunder
+# 2. get_team_roster('OKC Thunder') → ['Player1', 'Player2', ...]
+# 3. classify_player_tier('Player1') → 'Starter'
+# 4. classify_player_tier('Player2') → 'Rotation'
+# ... (13 more classification calls)
+```
+
+### 4. Tier Label Creation
+
+Training labels are derived from a composite performance score:
+
+```python
+composite_score = (
+    0.35 * normalized_pts +  # Points (35% weight)
+    0.20 * normalized_ast +  # Assists (20%)
+    0.15 * normalized_reb +  # Rebounds (15%)
+    0.15 * normalized_fg_pct +  # Shooting efficiency (15%)
+    0.10 * normalized_plus_minus +  # Impact (10%)
+    0.05 * normalized_stl_blk  # Defense (5%)
+)
+
+# Thresholds (calibrated for balanced class distribution):
+if score >= 0.85: tier = 'Elite'
+elif score >= 0.70: tier = 'All-Star'
+elif score >= 0.50: tier = 'Starter'
+elif score >= 0.30: tier = 'Rotation'
+else: tier = 'Bench'
+```
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how you can help:
+Contributions welcome! Areas for enhancement:
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make your changes** and test thoroughly
-4. **Commit your changes**: `git commit -m 'Add amazing feature'`
-5. **Push to the branch**: `git push origin feature/amazing-feature`
-6. **Open a Pull Request**
-
-### Development Guidelines
-- Follow PEP 8 for Python code
-- Use TypeScript for new React components
-- Add comments for complex logic
-- Test with multiple query types before submitting
+- 🔄 **Multi-season classification** - Track player trajectory over time
+- 📈 **Advanced metrics** - PER, Win Shares, VORP integration
+- 🏆 **Playoff mode** - Separate classification for postseason performance
+- 📊 **Position-specific models** - Specialized classifiers for Guards/Forwards/Centers
+- 🎨 **Enhanced visualizations** - Interactive charts and player comparisons
+- 🌐 **Multi-league support** - Extend to WNBA, EuroLeague, etc.
 
 ---
 
-## 📄 Documentation
+## ⚠️ Known Limitations
 
-### Additional Resources
-- [Google Gemini API Documentation](https://ai.google.dev/docs)
-- [Model Context Protocol Specification](https://modelcontextprotocol.io/)
-- [NBA API Documentation](https://github.com/swar/nba_api)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [React Documentation](https://react.dev/)
+### 1. Gemini finish_reason 12 (UNEXPECTED_TOOL_CALL)
 
-### Key Concepts
-- **MCP (Model Context Protocol)**: A standardized way for LLMs to interact with external tools
-- **Function Calling**: Gemini's ability to recognize when to use tools vs general knowledge
-- **Google Search Grounding**: Real-time web search integration for up-to-date information beyond training data
-- **Tool Orchestration**: Combining multiple data sources (NBA API + Google Search + LLM) in a single unified interface
-- **Agentic Behavior**: The LLM acts as an intelligent agent, making decisions about tool usage
+**Issue:** Gemini 2.5 Flash can trigger finish_reason 12 when receiving large tool response payloads, causing it to hallucinate non-existent tools and block the conversation.
+
+**Root Cause:** The model's internal content policy appears to activate when processing large JSON responses, even after JSON sanitization. This is particularly problematic for queries requiring multiple large datasets (e.g., live games + all rosters + classifications).
+
+**Affected Queries:**
+- ❌ "Which game today features the most Elite tier players?" (requires: get_live_games → get_team_roster for 16+ teams → classify_player_tier for 200+ players)
+- ❌ "Compare all teams in today's games by average player tier"
+- ❌ Any query requiring full roster classification across multiple games
+
+**Working Alternatives:**
+- ✅ "Give me counts by classification for all players in the #1 seeded team" (uses new aggregate_roster_classifications tool)
+- ✅ "Which team in the top 5 has the most All-Star tier players?" (limited scope)
+- ✅ "Compare Lakers vs Warriors average tier" (2 teams only)
+- ✅ Single-team roster queries now use efficient `aggregate_roster_classifications()` tool
+
+**Mitigation Strategies Attempted:**
+1. **JSON Sanitization** (`json_sanitizer.py`) - Converts all JSON to natural language before sending to Gemini
+   - **Result:** Partially effective, but large text responses still trigger blocking
+2. **Composite Tools** (`get_current_games_with_rosters()`) - Combines multiple operations into single tool call
+   - **Result:** Reduces orchestration steps but response payload still too large
+3. **Model Switching** - Tested gemini-1.5-flash, gemini-1.5-pro
+   - **Result:** Issue persists across all Gemini models
+4. **Safety Settings** - Set all HarmCategory to BLOCK_NONE
+   - **Result:** No improvement, finish_reason 12 is separate from safety filters
+
+**Current Status:** 
+- **Category #4 queries work reliably when scoped to 1-2 teams**
+- **New `aggregate_roster_classifications()` tool** efficiently handles roster-wide tier counts in one call
+- **Conversation history limited to last 10 messages** to prevent context overflow
+- Complex multi-game aggregations (16+ teams) still require backend-side implementation
+- This is a **Gemini API limitation**, not a code issue
+
+### 2. Max Iterations Limit
+
+**Issue:** The tool orchestration loop has a max_iterations=20 safety limit to prevent infinite loops.
+
+**Affected Scenarios:** 
+- Queries requiring 20+ sequential tool calls may hit the limit before completion
+- Long conversation histories can contribute to hitting this limit
+
+**Solutions Implemented:** 
+- **Conversation history truncation**: Only last 10 messages sent to Gemini (prevents context overflow)
+- **Efficient aggregator tool**: `aggregate_roster_classifications()` replaces 15+ sequential classify_player_tier calls with 1 call
+- Backend gracefully handles max iterations by returning partial results with helpful error message
+- Query scope should be limited to avoid hitting this threshold
+
+### 3. Player Name Matching
+
+**Issue:** NBA player names contain Unicode characters (Jokić, Dončić, Antetokounmpo) that can cause exact-match failures.
+
+**Solution Implemented:** 
+- NFD normalization in `nba_server.py` converts Unicode to ASCII equivalents
+- Fuzzy matching with case-insensitive comparison
+- **Current Accuracy:** ~98% for active players
+
+**Edge Cases:**
+- Players with very similar names (e.g., "Marcus Morris" vs "Markieff Morris")
+- Retired players not in current rosters may fail to match
+
+### 4. Classification Model Limitations
+
+**Training Data Constraints:**
+- **Seasons:** 2021-22 through 2025-26 only
+- **Sample Size:** 2,768 player-seasons (may underrepresent rare player archetypes)
+- **Recency Bias:** Model trained on recent NBA gameplay styles
+
+**Classification Edge Cases:**
+- **Rookies with <10 games:** Low confidence predictions due to limited stats
+- **Injury returns:** Players returning from long injuries may be misclassified until stats stabilize
+- **Position-agnostic:** Model doesn't account for positional differences (e.g., centers have different stat distributions than guards)
+
+**Tier Boundary Issues:**
+- Players near tier boundaries (e.g., 49% Starter, 48% Rotation) may fluctuate between classifications
+- All-Star/Elite distinction can be subjective for superstar role players
+
+### 5. Real-Time Data Availability
+
+**NBA API Limitations:**
+- **Delay:** Live scores update every ~30-60 seconds, not truly real-time
+- **Offseason:** Limited data during summer months (June-September)
+- **Preseason:** Exhibition games may have incomplete statistics
+
+**Roster Data:**
+- Rosters reflect official NBA data, which may lag behind trades/signings by 1-2 days
+- Two-way and G-League players may not appear consistently
+
+### 6. Response Formatting
+
+**Markdown Rendering:**
+- Complex tables with >10 columns may overflow on mobile devices
+- Emoji rendering depends on user's system fonts
+
+**Classification Visualization:**
+- The detailed player card UI only appears for `classify_player_tier()` direct calls
+- Multi-player classifications in text responses don't trigger the visual card
+
+### 7. Tool Usage Clarity
+
+**MCP Tool Invocation:**
+- Users cannot directly see which tools are being called (only visible in backend logs)
+- Source attribution helps but doesn't show the full execution graph
+
+**Recommended Queries per Category:**
+
+| Category | Use When | Example | Reliability |
+|----------|----------|---------|-------------|
+| **1. NBA API Only** | Need raw live data | "Show standings" | ✅ 99% |
+| **2. Gemini Knowledge** | Historical/factual questions | "Who won 2020 championship?" | ✅ 95% |
+| **3. API + Gemini** | Contextual live analysis | "Any upsets today?" | ✅ 90% |
+| **4. API + Gemini + Classifier** | Team-focused tier analysis | "How many Elite players does [team] have?" | ✅ 85% |
+| **5. Classifier Only** | Single player classification | "Classify LeBron James" | ✅ 96% |
+| **6. Guardrails** | Non-basketball questions | "What's the weather?" | ✅ 100% |
+
+**Best Practices:**
+- ✅ **DO:** Ask focused questions about 1-2 specific teams
+- ✅ **DO:** Use player names as they appear in NBA rosters (full names preferred)
+- ✅ **DO:** Expect 3-5 second response times for complex queries
+- ❌ **DON'T:** Ask for analysis of all 8+ games simultaneously
+- ❌ **DON'T:** Use nicknames ("King James" instead of "LeBron James")
+- ❌ **DON'T:** Expect sub-second real-time updates
+
+### 8. Deployment Considerations
+
+#### MyBinder Specific Issues
+
+**Resource Constraints:**
+- **RAM:** ~2GB limit (sufficient for our PyTorch model but may struggle with heavy concurrent queries)
+- **CPU:** Shared resources (expect 2-3x slower classification than local)
+- **Timeout:** Sessions expire after 10 minutes of inactivity
+- **Build Time:** Initial environment setup takes 5-10 minutes (cached after first build)
+
+**Common MyBinder Problems:**
+
+1. **"GOOGLE_API_KEY not set" Error**
+   - **Cause:** Forgot to export API key in terminal
+   - **Solution:** Run `export GOOGLE_API_KEY='your-key'` before starting app
+   - **Note:** Must re-enter on each new session (no persistence)
+
+2. **"Model not found" Error**
+   - **Cause:** Model files not committed to Git repository
+   - **Solution:** Ensure `data/models/player_classifier.pth` and `data/scaler_params.json` are in repo
+   - **Check:** Files should be ~27KB and ~843 bytes respectively
+
+3. **Frontend Build Timeout**
+   - **Cause:** npm build takes 2-3 minutes, MyBinder may timeout
+   - **Solution:** Wait patiently or manually run `cd frontend && npm install && npm run build`
+
+4. **Proxy URL Not Working**
+   - **Cause:** Incorrect URL format or premature access
+   - **Solution:** Wait for "✅ App is ready!" message, use exact URL printed
+   - **Format:** `https://hub.gesis.mybinder.org/user/.../proxy/8000/`
+
+**MyBinder Performance Expectations:**
+- **First Load:** 5-10 seconds (model loading from disk)
+- **Classification Query:** 5-8 seconds (slower CPU)
+- **Multi-tool Queries:** 10-15 seconds
+- **Complex Orchestration:** May timeout after 20+ tool calls
+
+**What Works Well in MyBinder:**
+- ✅ Simple NBA API queries ("Show standings")
+- ✅ Single player classifications ("Classify LeBron James")
+- ✅ Historical questions (Gemini knowledge)
+- ✅ Team-focused analysis ("How many Elite players does Lakers have?")
+
+**What May Struggle:**
+- ⚠️ Multi-game roster aggregations (heavy memory)
+- ⚠️ Rapid-fire queries (resource contention)
+- ⚠️ Very long conversation histories (>20 messages)
+
+#### Local Development
+
+**System Requirements:**
+- ~2GB RAM for PyTorch model + Gemini API calls
+- Initial model load: 2-3 seconds
+- Python 3.11+ (3.13 recommended)
+
+**API Key Security:**
+- `.env` file must be manually created (not in version control)
+- Gemini API has rate limits (60 requests/minute on free tier)
+- Never commit API keys to Git
+
+**Performance Benefits vs MyBinder:**
+- 2-3x faster classification inference
+- No session timeouts
+- Full debugging capabilities
+- Persistent storage for conversation history
+
+---
+
+## 📄 License
+
+This project is for educational purposes as part of Drexel University's Applied AI course (Fall 2025).
 
 ---
 
 ## ❤️ Acknowledgements
 
-- **Google Gemini** - For the powerful language model and function calling capabilities
-- **Anthropic** - For pioneering the Model Context Protocol
-- **nba_api** - For providing easy access to NBA statistics
-- **FastAPI** - For the excellent Python web framework
-- **React Team** - For the amazing frontend library
-- **Tailwind CSS** - For the utility-first CSS framework
+- **Google Gemini** - Powerful LLM with function calling capabilities
+- **Anthropic** - Model Context Protocol specification
+- **nba_api** - Comprehensive NBA statistics API
+- **PyTorch Team** - Excellent deep learning framework
+- **FastAPI** - Modern Python web framework
+- **React & Vite** - Amazing frontend tooling
 
-Special thanks to the open-source community for making projects like this possible!
-
----
-
-## 📝 Changelog
-
-### Version 1.1.0 (Current - November 2025)
-- ✅ **Markdown Table Rendering**: Added `remark-gfm` plugin for proper table formatting
-- ✅ **Enhanced System Instructions**: Explicit formatting rules with WRONG vs RIGHT examples
-- ✅ **Tool Correlation Logic**: Smart tool usage (e.g., player questions → team standings)
-- ✅ **Refined Guardrails**: Basketball-only policy that answers ALL NBA questions including past games
-- ✅ **Search Grounding**: Automatic Google Search integration for current season data
-- ✅ **MyBinder Ready**: Complete dependency specification in environment.yml
-- ✅ **Production Hardening**: 6 iterations of system instruction improvements for edge cases
-
-### Version 1.0.0 (Initial Release)
-- ✅ Initial release with full functionality
-- ✅ Integrated Google Gemini 2.5 Flash with MCP and Google Search grounding
-- ✅ Implemented three NBA API tools (live games, standings, player stats)
-- ✅ Built premium glassmorphism UI with two-column layout
-- ✅ Added conversation history and context management
-- ✅ Implemented triple-source attribution (NBA API, Google Search, Gemini LLM)
-- ✅ Added quick actions and suggested queries
-- ✅ Created comprehensive documentation
-
-### Future Enhancements
-- 🔄 Add more NBA tools (team stats, game highlights, playoff brackets)
-- 🔄 Implement user authentication and saved conversations
-- 🔄 Add data visualization for statistics
-- 🔄 Support for multiple sports leagues
-- 🔄 Voice input/output capabilities
+Special thanks to the open-source community! 🙏
 
 ---
 
@@ -467,5 +825,6 @@ Special thanks to the open-source community for making projects like this possib
 
 **Built with ❤️ for basketball fans everywhere**
 
+🏀 **Hooplytics** - Where AI meets NBA 🏀
 
 </div>

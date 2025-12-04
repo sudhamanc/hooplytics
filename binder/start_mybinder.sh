@@ -1,12 +1,29 @@
 #!/bin/bash
 
 echo "========================================="
-echo "🏀 Hoop.io - MyBinder Setup"
+echo "🏀 Hooplytics - MyBinder Setup"
 echo "========================================="
+
+# Check for API key
+if [ -z "$GOOGLE_API_KEY" ]; then
+    echo ""
+    echo "⚠️  WARNING: GOOGLE_API_KEY not set!"
+    echo ""
+    echo "To use Hooplytics, you need a Google Gemini API key."
+    echo ""
+    echo "Steps to set it up:"
+    echo "1. Get your API key from: https://makersuite.google.com/app/apikey"
+    echo "2. Run this command in the terminal:"
+    echo "   export GOOGLE_API_KEY='your-api-key-here'"
+    echo "3. Then restart this script: ./binder/start_mybinder.sh"
+    echo ""
+    echo "========================================="
+    read -p "Press Enter to continue anyway (app will not work), or Ctrl+C to exit..."
+fi
 
 # Build frontend for production
 echo "Building frontend..."
-cd frontend
+cd ../frontend
 npm run build
 cd ..
 

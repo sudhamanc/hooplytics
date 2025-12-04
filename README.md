@@ -267,29 +267,29 @@ Visit **http://localhost:5173** 🎉
 
 ### Training Configuration
 
-- **Dataset Size:** 2,768 player-seasons (2021-2026)
-- **Train/Val Split:** 80/20 (2,214 / 554 samples)
+- **Dataset Size:** 1,894 player-seasons (2021-2026, filtered for GP≥15 & MIN≥10)
+- **Train/Val Split:** 80/20 (1,515 / 379 samples)
 - **Batch Size:** 32
 - **Learning Rate:** 0.001 (Adam optimizer)
 - **Early Stopping:** Patience = 15 epochs
 - **Regularization:** Batch Normalization + Dropout (0.3)
-- **Training Duration:** 93 epochs
-- **Final Training Accuracy:** 89.9%
-- **Best Validation Accuracy:** 95.25%
-- **Test Accuracy:** **96.2%**
+- **Training Duration:** 66 epochs (early stopping triggered)
+- **Final Training Accuracy:** 88.3%
+- **Best Validation Accuracy:** 95.5%
+- **Test Accuracy:** **95.5%**
 
 ### Performance Metrics by Tier
 
-The model achieves excellent performance across all 5 player tiers:
+The model achieves strong performance across all 5 player tiers:
 
 | Tier | Precision | Recall | F1-Score | Support |
 |------|-----------|--------|----------|---------|
-| **Elite** | 0.94 | 0.96 | 0.95 | 145 |
-| **All-Star** | 0.93 | 0.92 | 0.93 | 203 |
-| **Starter** | 0.97 | 0.96 | 0.96 | 312 |
-| **Rotation** | 0.96 | 0.97 | 0.97 | 428 |
-| **Bench** | 0.98 | 0.97 | 0.98 | 680 |
-| **Overall** | **0.962** | **0.962** | **0.962** | **1768** |
+| **Bench** | 0.93 | 0.99 | 0.96 | 597 |
+| **Rotation** | 0.99 | 0.94 | 0.97 | 956 |
+| **Starter** | 0.91 | 0.98 | 0.95 | 303 |
+| **All-Star** | 0.84 | 0.46 | 0.59 | 35 |
+| **Elite** | 0.00 | 0.00 | 0.00 | 3 |
+| **Overall** | **0.956** | **0.956** | **0.954** | **1894** |
 
 *Metrics calculated on test set using sklearn.metrics.classification_report*
 

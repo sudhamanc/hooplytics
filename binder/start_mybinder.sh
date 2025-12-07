@@ -21,13 +21,10 @@ if [ -z "$GOOGLE_API_KEY" ]; then
     read -p "Press Enter to continue anyway (app will not work), or Ctrl+C to exit..."
 fi
 
-# Build frontend for production
-echo "Building frontend..."
-cd ../frontend
-npm run build
-cd ..
+# Navigate to repo root
+cd ${HOME}
 
-# Serve static files from backend
+# Serve static files from backend (frontend already built in postBuild)
 echo "Starting backend with static file serving..."
 uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
 

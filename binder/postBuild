@@ -1,10 +1,14 @@
 #!/bin/bash
 set -e
 
-# Install frontend dependencies
+# Install frontend dependencies and build
 echo "Installing frontend dependencies..."
-cd frontend
+cd ${HOME}/frontend
 npm install
-cd ..
+
+echo "Building frontend..."
+npm run build
+
+cd ${HOME}
 
 echo "Binder setup complete!"

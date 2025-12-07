@@ -24,7 +24,13 @@ fi
 # Navigate to repo root
 cd ${HOME}
 
-# Serve static files from backend (frontend already built in postBuild)
+# Build frontend for production
+echo "Building frontend..."
+cd frontend
+npm run build
+cd ..
+
+# Serve static files from backend
 echo "Starting backend with static file serving..."
 uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
 

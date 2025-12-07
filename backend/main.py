@@ -18,6 +18,8 @@ from google.generativeai import protos
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
+# Add backend directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from json_sanitizer import sanitize_tool_response
 
 load_dotenv()

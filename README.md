@@ -153,8 +153,8 @@ Hooplytics intelligently routes queries through different pathways based on the 
 #### Step 1: Clone and Setup
 
 ```bash
-git clone <your-repo-url>
-cd Assignment5
+git clone https://github.com/sudhamanc/hooplytics.git
+cd hooplytics
 
 # Create virtual environment
 python3.13 -m venv venv

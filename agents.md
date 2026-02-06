@@ -104,6 +104,26 @@ Composite score weights: 35% PTS, 20% AST, 15% REB, 15% FG%, 10% +/-, 5% STL+BLK
 - **UI layout:** Header uses `sticky top-0`; right panel needs `pt-[195px]` top padding to align with left panel.
 - **MyBinder SSL:** `pip-system-certs>=5.0` must be in `binder/environment.yml`.
 
+## Google Gemini Credentials — Dos and Don'ts
+
+### Do
+
+- Store `GOOGLE_API_KEY` in `backend/.env` and load it via environment variables at runtime
+- Use `backend/.env.example` as the template — it contains the expected variable names without real values
+- Rotate your API key immediately if you suspect it has been exposed
+- Use a separate API key per environment (local dev, staging, production) when possible
+- Restrict your key in the Google Cloud Console to only the Generative Language API
+- Set usage quotas and billing alerts in the Google Cloud Console to catch runaway costs
+
+### Don't
+
+- **Never** hardcode `GOOGLE_API_KEY` (or any API key) directly in source code
+- **Never** commit `backend/.env` or any file containing a real API key to version control — `.gitignore` already excludes `.env`
+- **Never** log, print, or expose the API key in error messages, API responses, or frontend code
+- **Never** share a single API key across multiple contributors — each developer should use their own key
+- **Never** embed the key in frontend bundles, environment variables accessible to the browser, or client-side config files
+- **Never** disable or weaken Gemini safety settings beyond the project's current configuration without team review — `backend/main.py` already sets `HarmBlockThreshold` to a deliberate level
+
 ## Code Style
 
 - **Backend:** PEP 8, type hints, try/except with dict returns, `print()` for logging
